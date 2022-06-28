@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+
+	<extension point="org.eclipse.ui.newWizards">
+		<category name="New Asi Project" id="com.asi.training.ui.asi.plugin"></category>
+		<wizard id="com.asi.training.ui.wizards.MyNewWizard" name="ASI Test" icon="icons/sample.png" class="com.asi.training.ui.wizards.MyNewWizard" category="com.asi.training.ui.asi.plugin"></wizard>
+	</extension>
+
+
+	<extension point="org.eclipse.ui.preferencePages">
+		<page name="ASIPARENTAPP" class="com.asi.training.preferences.ParentPreferencePage" id="com.asi.training.ui.preferences.ParentPreferencePage"></page>
+
+	</extension>
+
+	<!--The category is only to organise multiple preferences grouped by feature-->
+
+	<extension point="org.eclipse.ui.preferencePages">
+		<page name="ASI" class="com.asi.training.preferences.DemoPreferencePage" id="com.asi.training.ui.preferences.DemoPreferencePage" category="com.asi.training.ui.preferences.ParentPreferencePage">
+			<keywordReference id="com.asi.training.ui.keywords"></keywordReference>
+		</page>
+
+	</extension>
+
+	<extension point="org.eclipse.ui.keywords">
+		<keyword id="com.asi.training.ui.keywords" label="offset timezone"></keyword>
+	</extension>
+
+
+	<extension point="org.eclipse.ui.commands">
+		<command defaultHandler="com.asi.training.ui.handlers.SampleHandler" id="com.asi.training.ui.hellocommand" name="hellocommand"></command>
+	</extension>
+
+	<extension point="org.eclipse.ui.menus">
+		<menuContribution allPopups="false" locationURI="menu:org.eclipse.ui.main.menu">
+			<menu id="fileMenu" label="Test Dialogs">
+				<command commandId="com.asi.training.ui.hellocommand" label="hello" style="push"></command>
+			</menu>
+		</menuContribution>
+	</extension>
+
+
+	<extension point="org.eclipse.ui.newWizards">
+		<category name="Feeds" id="com.asi.training.ui.category" />
+		<wizard name="New Feed" class="com.asi.training.ui.wizards.NewFeedWizard" category="com.asi.training.ui.category" icon="icons/newfeed_wiz.gif" id="com.asi.training.ui.wizards.NewFeedWizard" />
+	</extension>
+
+
+	<extension point="org.eclipse.ui.navigator.navigatorContent">
+		<navigatorContent activeByDefault="true" contentProvider="com.asi.training.ui.core.FeedContentProvider" labelProvider="com.asi.training.ui.core.FeedLabelProvider" id="com.asi.training.ui.feedNavigatorContent" name="Feed Navigator Content">
+			<triggerPoints>
+				<and>
+					<instanceof value="org.eclipse.core.resources.IResource" />
+					<test forcePluginActivation="true" property="org.eclipse.core.resources.extension" value="feeds" />
+				</and>
+			</triggerPoints>
+			<possibleChildren>
+				<or>
+					<instanceof value="com.asi.training.ui.core.Feed" />
+				</or>
+			</possibleChildren>
+		</navigatorContent>
+	</extension>
+
+
+	<extension point="org.eclipse.ui.navigator.viewer">
+		<viewerContentBinding viewerId="org.eclipse.ui.navigator.ProjectExplorer">
+			<includes>
+				<contentExtension pattern="com.asi.training.ui.feedNavigatorContent" />
+			</includes>
+		</viewerContentBinding>
+	</extension>
+
+
+	<extension point="org.eclipse.ui.commands">
+		<command name="Show Feed in Browser" description="Shows the selected feed in browser" id="com.asi.training.ui.handlers.ShowFeedInBrowserCommand" defaultHandler="com.asi.training.ui.handlers.ShowFeedInBrowserHandler" />
+	</extension>
+
+	<extension point="org.eclipse.ui.menus">
+		<menuContribution allPopups="false" locationURI="popup:org.eclipse.ui.navigator.ProjectExplorer#PopupMenu">
+			<command style="push" commandId="com.asi.training.ui.handlers.ShowFeedInBrowserCommand">
+				<visibleWhen checkEnabled="false">
+					<with variable="selection">
+						<iterate ifEmpty="false" operator="or">
+							<adapt type="com.asi.training.ui.core.Feed" />
+						</iterate>
+					</with>
+				</visibleWhen>
+			</command>
+		</menuContribution>
+	</extension>
+
+
+</plugin>
